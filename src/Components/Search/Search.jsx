@@ -11,36 +11,36 @@ const API_URL =
 export const Search = () => {
     const [searchInputValue, setSearchInputValue] = useState("");
     const [searchList, setSearchList] = useState([]);
-    const [filteredList, setFilteredList] = useState([]);
 
     const handleChange = (event) => {
         setSearchInputValue(event.target.value);
-
-        const newFilteredItems = searchList.filter((data) => {
-            return data.title.toLowerCase().includes(event.target.value.toLowerCase());
-        });
-
-        setFilteredList(newFilteredItems);
     };
 
     const clearSearch = () => {
         setSearchInputValue("");
-        setFilteredList([])
     };
 
     const fetchMovieList = async () => {
-        const response = await axios(API_URL, {
-            params: {
-                query: "movie",
-            },
-        });
-        setSearchList(response.data.results);
-        setFilteredList(response.data.results);
+        try {
+            const response = await axios(API_URL, {
+                params: {
+                    query: searchInputValue,
+                },
+            });
+            setSearchList(response.data.results);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
-        fetchMovieList();
-    }, []);
+        const timeout = setTimeout(() => {
+            fetchMovieList();
+        }, 300);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [searchInputValue]);
 
     return (
         <div className="search-container">
@@ -50,7 +50,7 @@ export const Search = () => {
             </div>
 
             <SearchInput handleChange={handleChange} searchInputValue={searchInputValue} clearSearch={clearSearch} />
-            <SearchList searchList={filteredList} />
+            <SearchList searchList={searchList} />
         </div>
     );
 };

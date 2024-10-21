@@ -10,6 +10,7 @@
     border-radius: 4px;
     margin-bottom: 30px;
     outline: 1px solid black;
+    padding-right: 40px;
 }
 
 .search-input-container button {
